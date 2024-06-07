@@ -37,9 +37,6 @@ public class EmployeeServices {
         if (employee.getName() != null) {
             existEmployee.setName(employee.getName());
         }
-        if (employee.getSalary() != null) {
-            existEmployee.setSalary(employee.getSalary());
-        }
         if (employee.getCity() != null) {
             existEmployee.setCity(employee.getCity());
         }
