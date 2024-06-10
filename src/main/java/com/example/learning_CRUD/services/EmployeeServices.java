@@ -16,7 +16,7 @@ public class EmployeeServices {
 
     public String createNewEmployee(Employee employee) {
         employeeRepository.save(employee);
-        return "Employee added to the database";
+        return "Employee added to the database, HTTP Response 200 OK";
     }
 
     public List<Employee> getAllEmployees() {
@@ -27,12 +27,13 @@ public class EmployeeServices {
 
     public Employee getEmployeeById(long id) {
         return employeeRepository.findById(id)
-                .orElseThrow(() -> new EmployeeNotFoundException("Employee ID " + id + " not found"));
+                .orElseThrow(() -> new EmployeeNotFoundException(
+                        "Employee ID " + id + " not found, HTTP Response 404 Not Found"));
     }
 
     public String updateEmployeeById(long id, Employee employee) {
         Employee existEmployee = employeeRepository.findById(id)
-                .orElseThrow(() -> new EmployeeNotFoundException("Employee ID " + id + " not found"));
+                .orElseThrow(() -> new EmployeeNotFoundException("Employee ID " + id + " not found, HTTP Response 404 Not Found "));
 
         if (employee.getName() != null) {
             existEmployee.setName(employee.getName());
@@ -45,19 +46,19 @@ public class EmployeeServices {
         }
 
         employeeRepository.save(existEmployee);
-        return "Employee has been updated";
+        return "Employee has been updated, HTTP Response 200 OK";
     }
 
     public String deleteEmployeeById(long id) {
         Employee existEmployee = employeeRepository.findById(id)
-                .orElseThrow(() -> new EmployeeNotFoundException("Employee ID " + id + " not found"));
+                .orElseThrow(() -> new EmployeeNotFoundException("Employee ID " + id + " not found, HTTP Response 404 Not Found"));
 
         employeeRepository.deleteById(id);
-        return "Successfully deleted employee having ID " + id;
+        return "Successfully deleted employee having ID " + id + ", HTTP Response 200 OK";
     }
 
     public String deleteAllEmployees() {
         employeeRepository.deleteAll();
-        return "Deleted all employees";
+        return "Deleted all employees, HTTP Response 200 OK";
     }
 }
