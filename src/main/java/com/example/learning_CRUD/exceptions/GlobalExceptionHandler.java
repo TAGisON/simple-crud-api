@@ -10,20 +10,21 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import java.util.HashMap;
-import java.util.Map;
+
+import java.util.*;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(EmployeeNotFoundException.class)
     public ResponseEntity<String> handleEmployeeNotFoundException(EmployeeNotFoundException ex) {
-        return new ResponseEntity<>(ex.getMessage() + ": HTTP Response 404 Not Found", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<String> handleTypeMismatchException(MethodArgumentTypeMismatchException ex) {
-        return new ResponseEntity<>("Invalid input type: " + ex.getMessage() + ": HTTP Response 400 Bad Request", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Invalid input type: " + ex.getMessage() + ": HTTP Response 400 Bad Request",
+                HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -39,18 +40,31 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
-        String message = "Malformed JSON request: " + ex.getMessage() + ": HTTP Response 400 Bad Request";
+        String fieldName = extractFieldNameFromException(ex);
+        String message = "The field " + fieldName + " cannot have invalid type: HTTP Response 400 Bad Request";
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<String> httpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
-        String message = "Malformed JSON request: " + ex.getMessage() + ": HTTP Response 405 Method Not Allowed";
+        String message = "Malformed JSON request: " + ex.getMessage() + ": HTTP Response 400 Bad Request";
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<String> NoResourceFoundException(NoResourceFoundException ex) {
         String message = "Malformed JSON request: " + ex.getMessage() + ": HTTP Response 400 Bad Request";
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+    }
+
+    private String extractFieldNameFromException(HttpMessageNotReadableException ex) {
+        
+        String message = ex.getMessage();
+        if (message.contains("Integer")) {
+            return "age";
+        } else if (message.contains("Double")) {
+            return "salary";
+        }
+        return "unknown";
     }
 }

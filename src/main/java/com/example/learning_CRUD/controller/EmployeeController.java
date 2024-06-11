@@ -8,6 +8,7 @@ import com.example.learning_CRUD.entity.Employee;
 import com.example.learning_CRUD.services.EmployeeServices;
 
 import java.util.List;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api")
@@ -17,7 +18,7 @@ public class EmployeeController {
     private EmployeeServices employeeServices;
 
     @PostMapping("/employee")
-    public ResponseEntity<String> createEmployee(@RequestBody Employee employee) {
+    public ResponseEntity<String> createEmployee(@Valid @RequestBody Employee employee) {
         String response = employeeServices.createNewEmployee(employee);
         return ResponseEntity.ok(response);
     }
@@ -35,7 +36,7 @@ public class EmployeeController {
     }
 
     @PutMapping("/employee/{id}")
-    public ResponseEntity<String> updateEmployee(@PathVariable Long id, @RequestBody Employee employeeDetails) {
+    public ResponseEntity<String> updateEmployee(@PathVariable Long id, @Valid @RequestBody Employee employeeDetails) {
         String response = employeeServices.updateEmployeeById(id, employeeDetails);
         return ResponseEntity.ok(response);
     }
